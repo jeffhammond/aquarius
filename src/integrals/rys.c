@@ -25,6 +25,22 @@
 #include "internal.h"
 
 /**
+ * generate the roots and weights of the quadrature from the eigenvalues and first element of each eigenvector
+ */
+void quadrature(int n, double* restrict a, double* restrict b, double mu0, double* restrict rt, double* restrict wt)
+{
+    double Z[n * n] __attribute__((aligned(64)));
+
+    int info = dstev('V', n, a, b, Z, n);
+    assert(info == 0);
+
+    for (int i = 0;i < n;i++) {
+        rt[i] = a[i];
+        wt[i] = Z[i * n] * Z[i * n] * mu0;
+    }
+}
+
+/**
  * generate the roots and weights of the Rys quadrature
  *
  * see Golub, G. H.; Welsch, J. H. Math. Comput. 23, 221-230 (1969)
@@ -32,66 +48,54 @@
  */
 void rysquad(double T, int n, double* restrict rt, double* restrict wt)
 {
-    double a[n], b[n - 1], tmp;
-    int i, j, k;
-    double R[n + 1][n + 1];
-    double fm0;
+    double a[n] __attribute__((aligned(64)));
+    double b[n - 1] __attribute__((aligned(64)));
+    double R[n+1][n+1] __attribute__((aligned(64)));
+    const int n1 = n+1;
 
-    for (i = 0;i < n + 1;i++)
-    {
-        for (j = 0;j < n + 1;j++)
-        {
-            R[i][j] = fm(T, i + j);
+    for (int i = 0;i < n1;i++) {
+        for (int j = 0;j < n1;j++) {
+            R[i][j] = fm(T, i+j);
         }
     }
 
-    for (i = 0;i < n + 1;i++)
-    {
-        for (j = i;j < n + 1;j++)
-        {
-            for (k = 0;k <= i - 1;k++)
-            {
-                R[i][j] -= R[k][i] * R[k][j] / R[k][k];
+    for (int i = 0;i < n1;i++) {
+        for (int j = i;j < n1;j++) {
+            double rij = R[i][j];
+            for (int k = 0;k <= i - 1;k++) {
+                double rki = R[k][i];
+                double rkj = R[k][j];
+                double rkk = R[k][k];
+                rij -= rki * rkj / rkk;
             }
+            R[i][j] = rij;
         }
     }
 
-    for (i = 0;i < n + 1;i++)
-    {
-        tmp = sqrt(fabs(1 / R[i][i]));
-
-        for (j = 0;j < n + 1;j++)
-        {
+    for (int i = 0;i < n1;i++) {
+        double abs = fabs(R[i][i])
+        double tmp = sqrt(1 / abs);
+        for (int j = 0;j < n1;j++) {
             R[i][j] *= tmp;
         }
     }
 
     a[0] = R[0][1] / R[0][0];
 
-    for (i = 0;i < n - 1;i++)
-    {
-        a[i + 1] = R[i + 1][i + 2] / R[i + 1][i + 1] - R[i][i + 1] / R[i][i];
-        b[i] = R[i + 1][i + 1] / R[i][i];
+    for (int i = 0;i < n - 1;i++) {
+        double r00  = R[i][i];
+        double r01  = R[i][i+1];
+        double ir00 = 1/r00;
+        double r11  = R[i+1][i+1];
+        double r12  = R[i+1][i+2];
+        double ir11 = 1/r11;
+        b[i]   = r11 * ir00;
+        a[i+1] = r12 * ir11 - r01 * ir00;
     }
 
-    fm0 = fm(T, 0);
-    quadrature(n, a, b, fm0, rt, wt);
-}
-
-/**
- * generate the roots and weights of the quadrature from the eigenvalues and first element of each eigenvector
- */
-void quadrature(int n, double* restrict a, double* restrict b, double mu0, double* restrict rt, double* restrict wt)
-{
-    int i, info;
-    double Z[n * n];
-
-    info = dstev('V', n, a, b, Z, n);
-    assert(info == 0);
-
-    for (i = 0;i < n;i++)
     {
-        rt[i] = a[i];
-        wt[i] = Z[i * n] * Z[i * n] * mu0;
+        double fm0 = fm(T, 0);
+        quadrature(n, a, b, fm0, rt, wt);
     }
 }
+
