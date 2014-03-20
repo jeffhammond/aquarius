@@ -28,73 +28,73 @@
 
 void zero(size_t n, double* a, size_t inca)
 {
-	if (inca == 1)
-	{
-		memset(a, 0, sizeof(double)*n);
-	}
-	else
-	{
-		size_t ia = 0;
-		for (size_t i = 0;i < n;i++)
-		{
-			a[ia] = 0.0;
-			ia += inca;
-		}
-	}
+    if (inca == 1)
+    {
+        memset(a, 0, sizeof(double)*n);
+    }
+    else
+    {
+        size_t ia = 0;
+        for (size_t i = 0;i < n;i++)
+        {
+            a[ia] = 0.0;
+            ia += inca;
+        }
+    }
 }
 
 void dxypz(size_t n, double alpha, const double* restrict a, size_t inca,
-		                           const double* restrict b, size_t incb,
-		             double  beta,       double* restrict c, size_t incc)
+                                   const double* restrict b, size_t incb,
+                     double  beta,       double* restrict c, size_t incc)
 {
-	if (inca == 1 && incb == 1 && incc == 1)
-	{
-		if (alpha == 1.0)
-		{
-			if (beta == 0.0)
-			{
-				for (size_t i = 0;i < n;i++)
-				{
-					c[i] = a[i]*b[i];
-				}
-			}
-			else
-			{
-				for (size_t i = 0;i < n;i++)
-				{
-					c[i] = beta*c[i] + a[i]*b[i];
-				}
-			}
-		}
-		else
-		{
-			if (beta == 0.0)
-			{
-				for (size_t i = 0;i < n;i++)
-				{
-					c[i] = alpha*a[i]*b[i];
-				}
-			}
-			else
-			{
-				for (size_t i = 0;i < n;i++)
-				{
-					c[i] = beta*c[i] + alpha*a[i]*b[i];
-				}
-			}
-		}
-	}
-	else
-	{
-		size_t ia = 0;
-		size_t ib = 0;
-		size_t ic = 0;
-		for (size_t i = 0;i < n;i++)
-		{
-			c[ic] = beta*c[ic] + alpha*a[ia]*b[ib];
-			ia += inca;
-			ib += incb;
-			ic += incc;
-		}
-	}
+    if (inca == 1 && incb == 1 && incc == 1)
+    {
+        if (alpha == 1.0)
+        {
+            if (beta == 0.0)
+            {
+                for (size_t i = 0;i < n;i++)
+                {
+                    c[i] = a[i]*b[i];
+                }
+            }
+            else
+            {
+                for (size_t i = 0;i < n;i++)
+                {
+                    c[i] = beta*c[i] + a[i]*b[i];
+                }
+            }
+        }
+        else
+        {
+            if (beta == 0.0)
+            {
+                for (size_t i = 0;i < n;i++)
+                {
+                    c[i] = alpha*a[i]*b[i];
+                }
+            }
+            else
+            {
+                for (size_t i = 0;i < n;i++)
+                {
+                    c[i] = beta*c[i] + alpha*a[i]*b[i];
+                }
+            }
+        }
+    }
+    else
+    {
+        size_t ia = 0;
+        size_t ib = 0;
+        size_t ic = 0;
+        for (size_t i = 0;i < n;i++)
+        {
+            c[ic] = beta*c[ic] + alpha*a[ia]*b[ib];
+            ia += inca;
+            ib += incb;
+            ic += incc;
+        }
+    }
 }
