@@ -184,3 +184,4 @@ bool RHFAOMOIntegrals<T>::run(TaskDAG& dag, const Arena& arena)
 
 INSTANTIATE_SPECIALIZATIONS(aquarius::op::RHFAOMOIntegrals);
 REGISTER_TASK(aquarius::op::RHFAOMOIntegrals<double>,"rhfaomoints");
+REGISTER_TASK(aquarius::op::RHFAOMOIntegrals<float>,"rhfaomoints");

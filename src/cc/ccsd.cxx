@@ -288,3 +288,4 @@ diis?
 
 INSTANTIATE_SPECIALIZATIONS(aquarius::cc::CCSD);
 REGISTER_TASK(aquarius::cc::CCSD<double>,"ccsd",spec);
+REGISTER_TASK(aquarius::cc::CCSD<float>,"ccsd",spec);

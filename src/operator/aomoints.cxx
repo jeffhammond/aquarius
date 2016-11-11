@@ -352,7 +352,7 @@ pqrs_integrals<T> pqrs_integrals<T>::transform(Index index, const vector<int>& n
     auto iidx = ibegin;
     auto iint = ints.begin();
 
-    matrix<double> before(nptot, nqtot), after;
+    matrix<T> before(nptot, nqtot), after;
 
     if (index == A)
     {
@@ -397,7 +397,7 @@ pqrs_integrals<T> pqrs_integrals<T>::transform(Index index, const vector<int>& n
                             {
                                 for (int q = startq[irrepq];q < startq[irrepq]+nq[irrepq];q++)
                                 {
-                                    double val = after[c][q];
+                                    T val = after[c][q];
                                     if (aquarius::abs(val) > 1e-12)
                                     {
                                         out.idxs.emplace_back(c, q, r, s);
@@ -427,7 +427,7 @@ pqrs_integrals<T> pqrs_integrals<T>::transform(Index index, const vector<int>& n
                             {
                                 for (int c = startc[irrepc];c < startc[irrepc]+nc[irrepc];c++)
                                 {
-                                    double val = after[p][c];
+                                    T val = after[p][c];
                                     if (aquarius::abs(val) > 1e-12)
                                     {
                                         out.idxs.emplace_back(p, c, r, s);
@@ -1386,7 +1386,7 @@ bool AOMOIntegrals<T>::run(TaskDAG& dag, const Arena& arena)
     H.getIJAB()({0,1},{1,0})["IjAb"] = H.getABIJ()({1,0},{0,1})["AbIj"];
     H.getIJAB()({0,0},{0,0})["ijab"] = H.getABIJ()({0,0},{0,0})["abij"];
 
-    SpinorbitalTensor<double> D("D", arena, PointGroup::C1(), {vrt,occ}, {0,1}, {0,1});
+    SpinorbitalTensor<T> D("D", arena, PointGroup::C1(), {vrt,occ}, {0,1}, {0,1});
 
     if (arena.rank == 0)
     {
@@ -1456,3 +1456,4 @@ INSTANTIATE_SPECIALIZATIONS(aquarius::op::pqrs_integrals);
 INSTANTIATE_SPECIALIZATIONS(aquarius::op::abrs_integrals);
 INSTANTIATE_SPECIALIZATIONS(aquarius::op::AOMOIntegrals);
 REGISTER_TASK(aquarius::op::AOMOIntegrals<double>,"aomoints");
+REGISTER_TASK(aquarius::op::AOMOIntegrals<float>,"aomoints");
