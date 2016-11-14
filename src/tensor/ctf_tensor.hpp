@@ -180,6 +180,17 @@ class CTFTensor : public IndexableTensor< CTFTensor<T>,T >, public Distributed
         }
 
         template <typename Container>
+        void writeRemoteData(float alpha, float beta, const Container& pairs)
+        {
+            dt->write(pairs.size(), alpha, beta, pairs.data());
+        }
+
+        void writeRemoteData(float alpha, float beta)
+        {
+            dt->write(0, alpha, beta, NULL);
+        }
+
+        template <typename Container>
         void getAllData(Container& vals) const
         {
             int64_t npair;
