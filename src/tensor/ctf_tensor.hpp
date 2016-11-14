@@ -169,12 +169,12 @@ class CTFTensor : public IndexableTensor< CTFTensor<T>,T >, public Distributed
         }
 
         template <typename Container>
-        void writeRemoteData(double alpha, double beta, const Container& pairs)
+        void writeRemoteData(T alpha, T beta, const Container& pairs)
         {
             dt->write(pairs.size(), alpha, beta, pairs.data());
         }
 
-        void writeRemoteData(double alpha, double beta)
+        void writeRemoteData(T alpha, T beta)
         {
             dt->write(0, alpha, beta, NULL);
         }
