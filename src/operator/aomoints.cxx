@@ -862,7 +862,7 @@ void abrs_integrals<T>::transcribe(SymmetryBlockedTensor<T>& symtensor, bool ass
                         }
                     }
 
-                    vector<kv_pair> pairs(npair);
+                    vector<tkv_pair<T>> pairs(npair);
 
                     size_t pair = 0;
                     for (int s = 0;s < ns[irrs];s++)
@@ -1390,7 +1390,7 @@ bool AOMOIntegrals<T>::run(TaskDAG& dag, const Arena& arena)
 
     if (arena.rank == 0)
     {
-        vector<kv_pair> pairsa, pairsb;
+        vector<tkv_pair<T>> pairsa, pairsb;
         for (int i = 0;i < 5;i++) pairsa.emplace_back(i+i*5, 1.0);
         for (int i = 0;i < 5;i++) pairsb.emplace_back(i+i*5, 1.0);
         D({0,1},{0,1})({0,0}).writeRemoteData(pairsa);
