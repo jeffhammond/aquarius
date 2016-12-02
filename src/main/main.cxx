@@ -17,7 +17,16 @@ int main(int argc, char **argv)
     #ifdef HAVE_ELEMENTAL
     El::Initialize(argc, argv);
     #else
-    MPI_Init(&argc, &argv);
+    int requested = MPI_THREAD_SERIALIZED, provided;
+    MPI_Init_thread(&argc, &argv, requested, &provided);
+    if (provided < requested) {
+        if (world().rank == 0) {
+            printf("requested=%s < provided=%s\n", MPI_THREAD_STRING(requested), MPI_THREAD_STRING(provided) );
+            printf("This may be due to using Open-MPI. \n"
+                   "Consider complaining to the developers via \n"
+                   "https://www.open-mpi.org/community/lists/users/.\n");
+        }
+    }
     #endif
 
     #ifdef HAVE_LIBINT2
@@ -36,7 +45,9 @@ int main(int argc, char **argv)
         if (world().rank == 0)
         {
             srand(::time(NULL));
-            switch (rand()%5)
+            int r = rand();
+            if (getenv("AQUARIUS_DETERMINISTIC_BANNER") != NULL) { r = 0; }
+            switch (r%5)
             {
                 case 0:
                     printf("================================================================================\n");
