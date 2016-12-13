@@ -22,7 +22,7 @@ pqrs_integrals<T>::pqrs_integrals(const vector<int>& norb, const ERI& aoints)
 
     ns = nr = nq = np = norb;
 
-    const deque<T>& oldints = aoints.ints;
+    const auto& oldints = aoints.ints;
     const deque<idx4_t>& oldidxs = aoints.idxs;
     size_t noldints = oldints.size();
     size_t nints = noldints;
